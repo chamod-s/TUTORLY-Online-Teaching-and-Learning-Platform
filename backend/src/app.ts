@@ -53,8 +53,12 @@ export const createApp = (): Application => {
   app.use(
     cors({
       origin: (origin, callback) => {
-        // Allow requests with no origin (e.g., Electron app / Postman)
-        if (!origin || allowedOrigins.includes(origin)) {
+        // Allow requests with no origin (e.g., Electron app / Postman) or any localhost/127.0.0.1 port in development
+        if (
+          !origin ||
+          allowedOrigins.includes(origin) ||
+          (env.NODE_ENV === 'development' && /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin))
+        ) {
           callback(null, true);
         } else {
           callback(new Error(`CORS policy: origin ${origin} not allowed`));
